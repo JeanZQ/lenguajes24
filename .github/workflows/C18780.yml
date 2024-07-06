@@ -1,34 +1,60 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: C18780
 
 on:
   push:
-    branches: [ "DevOps_C18780" ]
+    branches: [ "C18780" ]
   pull_request:
-    branches: [ "DevOps_C18780" ]
+    branches: [ "C18780" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
+
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: '8.0.x'
+
     - name: Restore dependencies
       run: |
-        cd C18780/backend
+        cd C18780/BE
         dotnet restore
+
     - name: Build
       run: |
-        cd C18780/backend
-        dotnet build --no-restore
-    - name: Test
+        cd C18780/BE
+        dotnet build --configuration Release
+
+    - name: Run unit tests
       run: |
-        cd C18780/backend
-        dotnet test --no-build --verbosity normal
+        cd C18780/BE
+        dotnet test --no-build --verbosity normal --configuration Release
+
+  publish-Api:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build & Push Image
+      run: |
+        cd C18780/BE
+        docker image build -t zjean42/api:latest .
+        docker image build -t zjean42/api:0.0.1 .
+        echo "${{ secrets.DOCKERHUBPASSC18780  }}" | docker login -u "zjeancarlo42@gmail.com" --password-stdin
+        docker push zjean42/api:latest
+        docker push zjean42/api:0.0.1
+        
+  publish-UI:   
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build & Push Image
+      run: |
+        cd C18780/FE/demo6/nextjs-dashboard
+        docker image build -t zjean42/ui:latest .
+        docker image build -t zjean42/ui:0.0.1 .
+        echo "${{ secrets.DOCKERHUBPASSC18780  }}" | docker login -u "zjeancarlo42@gmail.com" --password-stdin
+        docker push zjean42/ui:latest
+        docker push zjean42/ui:0.0.1  
