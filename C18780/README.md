@@ -1,4 +1,4 @@
-[Video](https://youtu.be/49CrUmGoCSg)
+[Video](https://www.youtube.com/watch?v=rOTanN0He7Q&rco=1)
 # Index 
 - [1. Authentication and Authorization](#authentication-and-authorization) 
 - [2. Sales Report Generation in StoreApi](#sales-report-generation-in-storeapi) 
